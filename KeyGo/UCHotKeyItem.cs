@@ -120,15 +120,18 @@ namespace KeyGo
         /// </summary>
         private void BtnDel_Click(object sender, EventArgs e)
         {
-            try
+            if (MessageBox.Show("是否确定删除该热键？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                KeyGo.DelHotKey(HotKeyItem);
-                Parent?.Controls.Remove(this);
-                OnValueChanged();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("在注销热键时异常：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                try
+                {
+                    KeyGo.DelHotKey(HotKeyItem);
+                    Parent?.Controls.Remove(this);
+                    OnValueChanged();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("在注销热键时异常：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }
