@@ -29,41 +29,41 @@ namespace KeyGo
         /// </summary>
         private void InitializeComponent()
         {
-            this.TxtHotKey1 = new System.Windows.Forms.TextBox();
+            this.BtnTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // TxtHotKey1
+            // BtnTest
             // 
-            this.TxtHotKey1.BackColor = System.Drawing.Color.White;
-            this.TxtHotKey1.Location = new System.Drawing.Point(96, 122);
-            this.TxtHotKey1.Name = "TxtHotKey1";
-            this.TxtHotKey1.ReadOnly = true;
-            this.TxtHotKey1.Size = new System.Drawing.Size(213, 23);
-            this.TxtHotKey1.TabIndex = 0;
-            this.TxtHotKey1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.TxtHotKey1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtHotKey1_KeyDown);
+            this.BtnTest.Location = new System.Drawing.Point(155, 162);
+            this.BtnTest.Name = "BtnTest";
+            this.BtnTest.Size = new System.Drawing.Size(193, 66);
+            this.BtnTest.TabIndex = 0;
+            this.BtnTest.Text = "Test";
+            this.BtnTest.UseVisualStyleBackColor = true;
+            this.BtnTest.Click += new System.EventHandler(this.button1_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(482, 315);
-            this.Controls.Add(this.TxtHotKey1);
+            this.ClientSize = new System.Drawing.Size(564, 390);
+            this.Controls.Add(this.BtnTest);
             this.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "KeyGo!";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TextBox TxtHotKey1;
+        private System.Windows.Forms.Button BtnTest;
     }
 }
 

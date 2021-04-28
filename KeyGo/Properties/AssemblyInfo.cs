@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("KeyGo")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("通过注册热键 启动/切换到/最小化 预设应用的小工具")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("KeyGo")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyCopyright("Copyright © 2021 jie65535")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

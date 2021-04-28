@@ -2,57 +2,79 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace KeyGo
 {
     public partial class FormMain : Form
     {
+        static readonly string _DataFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "KeyGo", "HotKey.xml");
+        readonly KeyGo _KeyGo;
+        
         public FormMain()
         {
             InitializeComponent();
+            _KeyGo = LoadHotKeyItems(_DataFilePath);
+            _KeyGo.FormHandle = Handle;
+            _KeyGo.RegAllKey();
         }
-
-
-
-        void ProcessHotkey(int hotKey_id)
-        {
-            //if (hotKey_id == 100)
-            //    MessageBox.Show("Test");
-        }
-
-
-
-
-
-        private void TxtHotKey1_KeyDown(object sender, KeyEventArgs e)
-        {
-            TxtHotKey1.Text = e.Modifiers.ToString();
-            Console.WriteLine($"down\t{e.KeyData}");
-        }
-
-
-
-
-
-
-
-
 
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            //AppHotKey.RegKey(Handle, 100, AppHotKey.KeyModifiers.Ctrl, Keys.W);
+
         }
+
+        #region 数据文件IO
+
+        private KeyGo LoadHotKeyItems(string xmlFilePath)
+        {
+            try
+            {
+                return KeyGo.LoadXml(xmlFilePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("载入数据文件异常：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return new KeyGo();
+        }
+
+        private void SaveHotKeyItems(KeyGo data)
+        {
+            try
+            {
+                data.SaveXml(_DataFilePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("保存数据文件异常：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        #endregion
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //AppHotKey.UnRegKey(Handle, 100);
+            _KeyGo.UnRegAllKey();
         }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -64,10 +86,27 @@ namespace KeyGo
             switch (m.Msg)
             {
             case WM_HOTKEY:
-                ProcessHotkey(m.WParam.ToInt32());
+                _KeyGo.ProcessHotkey(m.WParam.ToInt32());
                 break;
             }
         }
         #endregion
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //_KeyGo.Items.Add(new HotKeyItem
+            //{
+            //    ProcessName = "QQ",
+            //    StartupPath = "",
+            //    HotKey = "Ctrl+Q",
+            //    Enabled = true,
+            //    TriggerCounter = 0,
+            //    CreationTime = DateTime.Now,
+            //    LastModifiedTime = DateTime.Now,
+            //});
+            //SaveHotKeyItems(_KeyGo);
+            //new FormHotKey().ShowDialog();
+        }
     }
 }
