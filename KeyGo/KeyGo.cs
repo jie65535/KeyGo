@@ -193,13 +193,14 @@ namespace KeyGo
             {
                 ++hotkey.TriggerCounter;
 
+
                 // 热键相应逻辑：
                 // 若应用未启动：启动应用
                 // 若应用未在最前：激活窗体，推到最前
                 // 若应用已在最前：最小化窗体
 
                 var process = Process.GetProcessesByName(hotkey.ProcessName).Where(p => p.MainWindowHandle != IntPtr.Zero).ToArray().FirstOrDefault();
-                if (process != null)
+                if (process != null )
                 {
                     if (AppControl.IsForegroundWindow(process))
                         AppControl.MinimizeWindow(process);

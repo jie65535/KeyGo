@@ -40,7 +40,8 @@ namespace KeyGo
         {
             if (instance != null && instance.MainWindowHandle != IntPtr.Zero)
             {
-                ShowWindowAsync(instance.MainWindowHandle, (int)CmdShow.ShowNormal);
+                if (IsIconic(instance.MainWindowHandle))
+                    ShowWindowAsync(instance.MainWindowHandle, (int)CmdShow.Restore);
                 SetForegroundWindow(instance.MainWindowHandle);
             }
         }
@@ -138,7 +139,7 @@ namespace KeyGo
             /// the system restores it to its original size and position.
             /// An application should specify this flag when displaying the window for the first time.
             /// </summary>
-            ShowNormal= 1,
+            ShowNormal = 1,
         }
 
         [DllImport("User32.dll")]
@@ -149,5 +150,11 @@ namespace KeyGo
 
         [DllImport("User32.dll")]
         private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern bool IsZoomed(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsIconic(IntPtr hWnd);
     }
 }

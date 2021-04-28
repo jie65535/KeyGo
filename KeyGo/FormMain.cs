@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace KeyGo
@@ -13,6 +14,11 @@ namespace KeyGo
         public FormMain()
         {
             InitializeComponent();
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            AssemblyName thisAssemName = assembly.GetName();
+            Text += $" - {thisAssemName.Version}";
+
             _KeyGo = LoadHotKeyItems(_DataFilePath);
             _KeyGo.FormHandle = Handle;
             var p = Process.GetCurrentProcess();
@@ -36,6 +42,16 @@ namespace KeyGo
         private void FormMain_Load(object sender, EventArgs e)
         {
             Console.WriteLine(_DataFilePath);
+        }
+
+        bool isExit;
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!isExit)
+            {
+                Hide();
+                e.Cancel = true;
+            }
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -148,7 +164,9 @@ namespace KeyGo
 
         private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            // 如果点击托盘图标
+            // 鼠标左键点击托盘图标才触发
+            if (e.Button != MouseButtons.Left)
+                return;
 
             // 当前在前台则隐藏
             if (Visible)
@@ -179,6 +197,22 @@ namespace KeyGo
             // 如果最小化，则隐藏窗体
             if (WindowState == FormWindowState.Minimized)
                 Hide();
+        }
+
+        private void TSMIExit_Click(object sender, EventArgs e)
+        {
+            isExit = true;
+            Close();
+        }
+
+        private void TSMIPowerOnStartup_CheckedChanged(object sender, EventArgs e)
+        {
+            MessageBox.Show("暂未完成", "TODO");
+        }
+
+        private void TSMICloseToMin_CheckedChanged(object sender, EventArgs e)
+        {
+            MessageBox.Show("暂未完成", "TODO");
         }
     }
 }
