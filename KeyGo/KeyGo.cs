@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -15,6 +17,7 @@ namespace KeyGo
         public IntPtr FormHandle { get; set; }
 
         public List<HotKeyItem> Items { get; set; } = new List<HotKeyItem>();
+
 
         #region FILE IO
 
@@ -58,24 +61,6 @@ namespace KeyGo
 
         #endregion
 
-
-        /// <summary>
-        /// Processes the hotkey.
-        /// </summary>
-        /// <param name="hotKey_id">The hot key identifier.</param>
-        public void ProcessHotkey(int hotKey_id)
-        {
-            var hotkey = Items.Find(k => k.HotKeyID == hotKey_id);
-            if (hotkey != null)
-            {
-                ++hotkey.TriggerCounter;
-                MessageBox.Show($"ID:{hotkey.HotKeyID}\nKeys:{hotkey.HotKey}\nProcessName:{hotkey.ProcessName}\nStartupPath:{hotkey.StartupPath}", "HotKey", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-
-
-
         #region HotKey Register
 
         /// <summary>
@@ -98,6 +83,7 @@ namespace KeyGo
                 }
             }
         }
+
 
         /// <summary>
         /// Uns the reg all key.
@@ -195,5 +181,84 @@ namespace KeyGo
         }
 
         #endregion
+
+        /// <summary>
+        /// Processes the hotkey.
+        /// </summary>
+        /// <param name="hotKey_id">The hot key identifier.</param>
+        public void ProcessHotkey(int hotKey_id)
+        {
+            var hotkey = Items.Find(k => k.HotKeyID == hotKey_id);
+            if (hotkey != null)
+            {
+                ++hotkey.TriggerCounter;
+
+                // 热键相应逻辑：
+                // 若应用未启动：启动应用
+                // 若应用未在最前：激活窗体，推到最前
+                // 若应用已在最前：最小化窗体
+
+                var process = Process.GetProcessesByName(hotkey.ProcessName).Where(p => p.MainWindowHandle != IntPtr.Zero).ToArray().FirstOrDefault();
+                if (process != null)
+                {
+                    if (AppControl.IsForegroundWindow(process))
+                        AppControl.MinimizeWindow(process);
+                    else
+                        AppControl.ShowWindow(process);
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(hotkey.StartupPath) && File.Exists(hotkey.StartupPath))
+                        Process.Start(hotkey.StartupPath);
+                }
+
+                Console.WriteLine($"ID:{hotkey.HotKeyID} Keys:{hotkey.HotKey} ProcessName:{hotkey.ProcessName}\nStartupPath:{hotkey.StartupPath}");
+            }
+        }
+
+        /// <summary>
+        /// 添加一个新热键
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public void AddHotKey(HotKeyItem item)
+        {
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
+            Items.Add(item);
+            if (item.Enabled)
+                RegKey(item);
+        }
+
+        /// <summary>
+        /// 删除一个热键
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public void DelHotKey(HotKeyItem item)
+        {
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
+            Items.Remove(item);
+
+            if (item.HotKeyID != 0)
+                UnRegKey(item);
+        }
+
+        /// <summary>
+        /// 修改热键
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public void ChangeHotKey(HotKeyItem item)
+        {
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
+            // 重新注册
+            if (item.HotKeyID != 0)
+                UnRegKey(item);
+            if (item.Enabled)
+                RegKey(item);
+        }
     }
 }

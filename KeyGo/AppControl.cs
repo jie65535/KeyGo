@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 
 namespace KeyGo
 {
-    public class AppControl
+    public static class AppControl
     {
         /// <summary>
         /// 获取本应用程序当前正在运行的进程，若不存在则返回null
         /// </summary>
         /// <returns>当前正在运行的进程</returns>
-        private static Process GetCurrentRunningInstance()
+        public static Process GetCurrentRunningInstance()
         {
             Process current = Process.GetCurrentProcess();
             Process[] processes = Process.GetProcessesByName(current.ProcessName);
@@ -36,21 +36,28 @@ namespace KeyGo
         /// 显示指定实例窗体
         /// </summary>
         /// <param name="instance">The instance.</param>
-        private static void ShowWindow(Process instance)
+        public static void ShowWindow(Process instance)
         {
             if (instance != null && instance.MainWindowHandle != IntPtr.Zero)
-                ShowWindowAsync(instance.MainWindowHandle, (int)CmdShow.Show);
-            //SetForegroundWindow(instance.MainWindowHandle);
+            {
+                ShowWindowAsync(instance.MainWindowHandle, (int)CmdShow.ShowNormal);
+                SetForegroundWindow(instance.MainWindowHandle);
+            }
         }
 
         /// <summary>
         /// 隐藏指定实例窗体
         /// </summary>
         /// <param name="instance">The instance.</param>
-        public static void HideWindow(Process instance)
+        public static void MinimizeWindow(Process instance)
         {
             if (instance != null && instance.MainWindowHandle != IntPtr.Zero)
-                ShowWindowAsync(instance.MainWindowHandle, (int)CmdShow.Hide);
+                ShowWindowAsync(instance.MainWindowHandle, (int)CmdShow.Minimize);
+        }
+
+        public static bool IsForegroundWindow(Process instance)
+        {
+            return GetForegroundWindow() == instance.MainWindowHandle;
         }
 
         private enum CmdShow : int
@@ -139,5 +146,8 @@ namespace KeyGo
 
         [DllImport("User32.dll")]
         private static extern bool SetForegroundWindow(System.IntPtr hWnd);
+
+        [DllImport("User32.dll")]
+        private static extern IntPtr GetForegroundWindow();
     }
 }

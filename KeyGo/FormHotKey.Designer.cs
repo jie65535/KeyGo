@@ -175,6 +175,7 @@ namespace KeyGo
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "热键设置";
+            this.Load += new System.EventHandler(this.FormHotKey_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

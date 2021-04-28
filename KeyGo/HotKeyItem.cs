@@ -48,7 +48,7 @@ namespace KeyGo
         /// <value>
         ///   <c>true</c> if enabled; otherwise, <c>false</c>.
         /// </value>
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the trigger counter.
@@ -64,7 +64,7 @@ namespace KeyGo
         /// <value>
         /// The creation time.
         /// </value>
-        public DateTime CreationTime { get; set; }
+        public DateTime CreationTime { get; set; } = DateTime.Now;
 
         /// <summary>
         /// Gets or sets the last modified time.
@@ -72,6 +72,6 @@ namespace KeyGo
         /// <value>
         /// The last modified time.
         /// </value>
-        public DateTime LastModifiedTime { get; set; }
+        public DateTime LastModifiedTime { get; set; } = DateTime.Now;
     }
 }
