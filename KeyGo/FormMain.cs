@@ -4,8 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-using Microsoft.Win32;
-
 namespace KeyGo
 {
     public partial class FormMain : Form
@@ -302,26 +300,11 @@ namespace KeyGo
         {
             try
             {
-                if (enable)
-                {
-                    RegistryKey R_local = Registry.CurrentUser;
-                    RegistryKey R_run = R_local.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
-                    R_run.SetValue("KeyGo", Application.ExecutablePath);
-                    R_run.Close();
-                    R_local.Close();
-                }
-                else
-                {
-                    RegistryKey R_local = Registry.CurrentUser;
-                    RegistryKey R_run = R_local.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
-                    R_run.DeleteValue("KeyGo", false);
-                    R_run.Close();
-                    R_local.Close();
-                }
+                AppAutoStart.SetMeAutoStart(enable);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("注册表编辑失败：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("设置开机自启时异常：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
