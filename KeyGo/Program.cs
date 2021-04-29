@@ -14,7 +14,10 @@ namespace KeyGo
             var p = AppControl.GetCurrentRunningInstance();
             if (p != null)
             {
-                AppControl.ShowWindow(p);
+                if (p.MainWindowHandle == IntPtr.Zero)
+                    MessageBox.Show("应用已启动，无需重复运行", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else
+                    AppControl.ShowWindow(p);
             }
             else
             {

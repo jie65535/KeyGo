@@ -9,15 +9,21 @@ using System.Xml.Serialization;
 
 namespace KeyGo
 {
+    /// <summary>
+    /// KeyGo 核心功能类
+    /// </summary>
     public class KeyGo
     {
-        static int _RegMaxID;
+        #region Member
+
+        private static int _RegMaxID;
 
         [XmlIgnore]
         public IntPtr FormHandle { get; set; }
 
         public List<HotKeyItem> Items { get; set; } = new List<HotKeyItem>();
 
+        #endregion Member
 
         #region FILE IO
 
@@ -59,7 +65,7 @@ namespace KeyGo
             }
         }
 
-        #endregion
+        #endregion FILE IO
 
         #region HotKey Register
 
@@ -83,7 +89,6 @@ namespace KeyGo
                 }
             }
         }
-
 
         /// <summary>
         /// Uns the reg all key.
@@ -140,15 +145,19 @@ namespace KeyGo
                 case "ctrl":
                     keyModifiers |= AppHotKey.KeyModifiers.Ctrl;
                     break;
+
                 case "shift":
                     keyModifiers |= AppHotKey.KeyModifiers.Shift;
                     break;
+
                 case "alt":
                     keyModifiers |= AppHotKey.KeyModifiers.Alt;
                     break;
+
                 case "win":
                     keyModifiers |= AppHotKey.KeyModifiers.WindowsKey;
                     break;
+
                 default:
                     keyCode = (Keys)Enum.Parse(typeof(Keys), key);
                     break;
@@ -180,7 +189,21 @@ namespace KeyGo
             item.HotKeyID = 0;
         }
 
-        #endregion
+        #endregion HotKey Register
+
+        #region HotKey Trigger
+
+        /// <summary>
+        /// 热键触发时调用
+        /// </summary>
+        public event EventHandler<HotKeyTriggerEventArgs> HotKeyTriggerEvent;
+
+        private bool OnHotKeyTrigger(HotKeyItem item)
+        {
+            var args = new HotKeyTriggerEventArgs{ HotKeyItem = item };
+            HotKeyTriggerEvent?.Invoke(this, args);
+            return args.Handle;
+        }
 
         /// <summary>
         /// Processes the hotkey.
@@ -191,31 +214,40 @@ namespace KeyGo
             var hotkey = Items.Find(k => k.HotKeyID == hotKey_id);
             if (hotkey != null)
             {
+                //Console.WriteLine($"ID:{hotkey.HotKeyID} Keys:{hotkey.HotKey} ProcessName:{hotkey.ProcessName}\nStartupPath:{hotkey.StartupPath}");
                 ++hotkey.TriggerCounter;
-
+                // 触发事件，若被外部处理，则内部不再执行
+                if (OnHotKeyTrigger(hotkey))
+                    return;
 
                 // 热键相应逻辑：
                 // 若应用未启动：启动应用
                 // 若应用未在最前：激活窗体，推到最前
                 // 若应用已在最前：最小化窗体
 
-                var process = Process.GetProcessesByName(hotkey.ProcessName).Where(p => p.MainWindowHandle != IntPtr.Zero).ToArray().FirstOrDefault();
-                if (process != null )
-                {
-                    if (AppControl.IsForegroundWindow(process))
-                        AppControl.MinimizeWindow(process);
-                    else
-                        AppControl.ShowWindow(process);
-                }
-                else
+                var processes = Process.GetProcessesByName(hotkey.ProcessName);
+                if (processes == null || processes.Length < 1)
                 {
                     if (!string.IsNullOrWhiteSpace(hotkey.StartupPath) && File.Exists(hotkey.StartupPath))
                         Process.Start(hotkey.StartupPath);
                 }
-
-                Console.WriteLine($"ID:{hotkey.HotKeyID} Keys:{hotkey.HotKey} ProcessName:{hotkey.ProcessName}\nStartupPath:{hotkey.StartupPath}");
+                else
+                {
+                    var process = processes.Where(p => p.MainWindowHandle != IntPtr.Zero).ToArray().FirstOrDefault();
+                    if (process != null)
+                    {
+                        if (AppControl.IsForegroundWindow(process))
+                            AppControl.MinimizeWindow(process);
+                        else
+                            AppControl.ShowWindow(process);
+                    }
+                }
             }
         }
+
+        #endregion HotKey Trigger
+
+        #region HotKey Manager
 
         /// <summary>
         /// 添加一个新热键
@@ -261,5 +293,23 @@ namespace KeyGo
             if (item.Enabled)
                 RegKey(item);
         }
+
+        #endregion HotKey Manager
+    }
+
+    /// <summary>
+    /// 热键触发事件参数
+    /// </summary>
+    public class HotKeyTriggerEventArgs
+    {
+        public HotKeyItem HotKeyItem { get; set; }
+
+        /// <summary>
+        /// 获取或设置该事件是否已经被处理
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if handle; otherwise, <c>false</c>.
+        /// </value>
+        public bool Handle { get; set; }
     }
 }

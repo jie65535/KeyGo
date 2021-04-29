@@ -35,9 +35,9 @@ namespace KeyGo
             this.BtnAdd = new System.Windows.Forms.Button();
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.TSMICloseToHide = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMIPowerBoot = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMIExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.TSMIPowerOnStartup = new System.Windows.Forms.ToolStripMenuItem();
-            this.TSMICloseToMin = new System.Windows.Forms.ToolStripMenuItem();
             this.FLPHotKeys.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -75,34 +75,34 @@ namespace KeyGo
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.TSMICloseToMin,
-            this.TSMIPowerOnStartup,
+            this.TSMICloseToHide,
+            this.TSMIPowerBoot,
             this.TSMIExit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(149, 70);
             // 
+            // TSMICloseToHide
+            // 
+            this.TSMICloseToHide.CheckOnClick = true;
+            this.TSMICloseToHide.Name = "TSMICloseToHide";
+            this.TSMICloseToHide.Size = new System.Drawing.Size(148, 22);
+            this.TSMICloseToHide.Text = "关闭为最小化";
+            this.TSMICloseToHide.CheckedChanged += new System.EventHandler(this.TSMICloseToHide_CheckedChanged);
+            // 
+            // TSMIPowerBoot
+            // 
+            this.TSMIPowerBoot.CheckOnClick = true;
+            this.TSMIPowerBoot.Name = "TSMIPowerBoot";
+            this.TSMIPowerBoot.Size = new System.Drawing.Size(148, 22);
+            this.TSMIPowerBoot.Text = "开机自启动";
+            this.TSMIPowerBoot.CheckedChanged += new System.EventHandler(this.TSMIPowerBoot_CheckedChanged);
+            // 
             // TSMIExit
             // 
             this.TSMIExit.Name = "TSMIExit";
-            this.TSMIExit.Size = new System.Drawing.Size(180, 22);
+            this.TSMIExit.Size = new System.Drawing.Size(148, 22);
             this.TSMIExit.Text = "退出";
             this.TSMIExit.Click += new System.EventHandler(this.TSMIExit_Click);
-            // 
-            // TSMIPowerOnStartup
-            // 
-            this.TSMIPowerOnStartup.CheckOnClick = true;
-            this.TSMIPowerOnStartup.Name = "TSMIPowerOnStartup";
-            this.TSMIPowerOnStartup.Size = new System.Drawing.Size(180, 22);
-            this.TSMIPowerOnStartup.Text = "开机自启动";
-            this.TSMIPowerOnStartup.CheckedChanged += new System.EventHandler(this.TSMIPowerOnStartup_CheckedChanged);
-            // 
-            // TSMICloseToMin
-            // 
-            this.TSMICloseToMin.CheckOnClick = true;
-            this.TSMICloseToMin.Name = "TSMICloseToMin";
-            this.TSMICloseToMin.Size = new System.Drawing.Size(180, 22);
-            this.TSMICloseToMin.Text = "关闭为最小化";
-            this.TSMICloseToMin.CheckedChanged += new System.EventHandler(this.TSMICloseToMin_CheckedChanged);
             // 
             // FormMain
             // 
@@ -135,8 +135,8 @@ namespace KeyGo
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem TSMIExit;
-        private System.Windows.Forms.ToolStripMenuItem TSMIPowerOnStartup;
-        private System.Windows.Forms.ToolStripMenuItem TSMICloseToMin;
+        private System.Windows.Forms.ToolStripMenuItem TSMIPowerBoot;
+        private System.Windows.Forms.ToolStripMenuItem TSMICloseToHide;
     }
 }
 

@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfig.cs" />
     <Compile Include="AppControl.cs" />
     <Compile Include="AppHotKey.cs" />
     <Compile Include="FormHotKey.cs">

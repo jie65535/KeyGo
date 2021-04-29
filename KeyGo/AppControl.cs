@@ -41,7 +41,7 @@ namespace KeyGo
             if (instance != null && instance.MainWindowHandle != IntPtr.Zero)
             {
                 if (IsIconic(instance.MainWindowHandle))
-                    ShowWindowAsync(instance.MainWindowHandle, (int)CmdShow.Restore);
+                    ShowWindow(instance.MainWindowHandle, (int)CmdShow.Restore);
                 SetForegroundWindow(instance.MainWindowHandle);
             }
         }
@@ -53,9 +53,16 @@ namespace KeyGo
         public static void MinimizeWindow(Process instance)
         {
             if (instance != null && instance.MainWindowHandle != IntPtr.Zero)
-                ShowWindowAsync(instance.MainWindowHandle, (int)CmdShow.Minimize);
+                ShowWindow(instance.MainWindowHandle, (int)CmdShow.Minimize);
         }
 
+        /// <summary>
+        /// Determines whether [is foreground window] [the specified instance].
+        /// </summary>
+        /// <param name="instance">The instance.</param>
+        /// <returns>
+        ///   <c>true</c> if [is foreground window] [the specified instance]; otherwise, <c>false</c>.
+        /// </returns>
         public static bool IsForegroundWindow(Process instance)
         {
             return GetForegroundWindow() == instance.MainWindowHandle;
@@ -143,10 +150,12 @@ namespace KeyGo
         }
 
         [DllImport("User32.dll")]
-        private static extern bool ShowWindowAsync(System.IntPtr hWnd, int cmdShow);
+        private static extern bool ShowWindowAsync(IntPtr hWnd, int cmdShow);
+        [DllImport("User32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int cmdShow);
 
         [DllImport("User32.dll")]
-        private static extern bool SetForegroundWindow(System.IntPtr hWnd);
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("User32.dll")]
         private static extern IntPtr GetForegroundWindow();
