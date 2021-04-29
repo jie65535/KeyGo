@@ -325,6 +325,6 @@ namespace KeyGo
             }
         }
 
-        #endregion
+        #endregion 开机自启动
     }
 }

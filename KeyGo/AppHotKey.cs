@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace KeyGo
 {
-    public class AppHotKey
+    public static class AppHotKey
     {
         /// <summary>
         /// 注册热键
@@ -17,14 +17,7 @@ namespace KeyGo
         public static void RegKey(IntPtr hwnd, int hotKey_id, KeyModifiers keyModifiers, Keys key)
         {
             if (!RegisterHotKey(hwnd, hotKey_id, keyModifiers, key))
-            {
                 throw new Win32Exception();
-                //int code = Marshal.GetLastWin32Error();
-                //if (code == 1409)
-                //    MessageBox.Show("热键被占用！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //else
-                //    MessageBox.Show("注册热键失败！错误代码：" + code.ToString(), "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         /// <summary>
@@ -37,7 +30,6 @@ namespace KeyGo
             //注销Id号为hotKey_id的热键设定
             UnregisterHotKey(hwnd, hotKey_id);
         }
-
 
         //如果函数执行成功，返回值不为0。
         //如果函数执行失败，返回值为0。要得到扩展错误信息，调用GetLastError。

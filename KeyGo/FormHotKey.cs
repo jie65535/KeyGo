@@ -12,6 +12,7 @@ namespace KeyGo
         }
 
         public HotKeyItem HotKeyItem { get; set; }
+
         private void FormHotKey_Load(object sender, EventArgs e)
         {
             if (HotKeyItem != null)
@@ -110,6 +111,5 @@ namespace KeyGo
                 TxtStartupPath.Text = frm.FileName;
             }
         }
-
     }
 }

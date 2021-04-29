@@ -151,6 +151,7 @@ namespace KeyGo
 
         [DllImport("User32.dll")]
         private static extern bool ShowWindowAsync(IntPtr hWnd, int cmdShow);
+
         [DllImport("User32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int cmdShow);
 
