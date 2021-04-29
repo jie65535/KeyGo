@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("KeyGo")]
-[assembly: AssemblyDescription("通过注册热键 启动/切换到/最小化 预设应用的小工具")]
+[assembly: AssemblyDescription("通过注册热键 启动/切换到/最小化 预设应用的小工具 - 开源地址：https://github.com/jie65535/KeyGo")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("KeyGo")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //可以指定所有这些值，也可以使用“生成号”和“修订号”的默认值
 //通过使用 "*"，如下所示:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.1")]
+[assembly: AssemblyVersion("0.1.2")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

@@ -4,6 +4,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
+using Microsoft.Win32;
+
 namespace KeyGo
 {
     public partial class FormMain : Form
@@ -290,13 +292,39 @@ namespace KeyGo
 
         #endregion 托盘图标管理
 
+        #region 开机自启动
+
         /// <summary>
         /// 设置开机自启动
         /// </summary>
         /// <param name="enable">if set to <c>true</c> [enable].</param>
         private void SetPowerBoot(bool enable)
         {
-            // TODO
+            try
+            {
+                if (enable)
+                {
+                    RegistryKey R_local = Registry.CurrentUser;
+                    RegistryKey R_run = R_local.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+                    R_run.SetValue("KeyGo", Application.ExecutablePath);
+                    R_run.Close();
+                    R_local.Close();
+                }
+                else
+                {
+                    RegistryKey R_local = Registry.CurrentUser;
+                    RegistryKey R_run = R_local.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+                    R_run.DeleteValue("KeyGo", false);
+                    R_run.Close();
+                    R_local.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("注册表编辑失败：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
+        #endregion
     }
 }
