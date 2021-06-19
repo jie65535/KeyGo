@@ -38,12 +38,18 @@ namespace KeyGo
             this.TSMICloseToHide = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMIPowerBoot = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMIExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMIConfigFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMIExportConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMIImportConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMICopyConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMIPasteConfig = new System.Windows.Forms.ToolStripMenuItem();
             this.FLPHotKeys.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // FLPHotKeys
             // 
+            this.FLPHotKeys.AllowDrop = true;
             this.FLPHotKeys.AutoScroll = true;
             this.FLPHotKeys.BackColor = System.Drawing.Color.White;
             this.FLPHotKeys.Controls.Add(this.BtnAdd);
@@ -54,6 +60,8 @@ namespace KeyGo
             this.FLPHotKeys.Padding = new System.Windows.Forms.Padding(3);
             this.FLPHotKeys.Size = new System.Drawing.Size(488, 197);
             this.FLPHotKeys.TabIndex = 0;
+            this.FLPHotKeys.DragDrop += new System.Windows.Forms.DragEventHandler(this.FLPHotKeys_DragDrop);
+            this.FLPHotKeys.DragEnter += new System.Windows.Forms.DragEventHandler(this.FLPHotKeys_DragEnter);
             // 
             // BtnAdd
             // 
@@ -75,17 +83,18 @@ namespace KeyGo
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.TSMIConfigFile,
             this.TSMICloseToHide,
             this.TSMIPowerBoot,
             this.TSMIExit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(149, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 114);
             // 
             // TSMICloseToHide
             // 
             this.TSMICloseToHide.CheckOnClick = true;
             this.TSMICloseToHide.Name = "TSMICloseToHide";
-            this.TSMICloseToHide.Size = new System.Drawing.Size(148, 22);
+            this.TSMICloseToHide.Size = new System.Drawing.Size(180, 22);
             this.TSMICloseToHide.Text = "关闭为最小化";
             this.TSMICloseToHide.CheckedChanged += new System.EventHandler(this.TSMICloseToHide_CheckedChanged);
             // 
@@ -93,16 +102,55 @@ namespace KeyGo
             // 
             this.TSMIPowerBoot.CheckOnClick = true;
             this.TSMIPowerBoot.Name = "TSMIPowerBoot";
-            this.TSMIPowerBoot.Size = new System.Drawing.Size(148, 22);
+            this.TSMIPowerBoot.Size = new System.Drawing.Size(180, 22);
             this.TSMIPowerBoot.Text = "开机自启动";
             this.TSMIPowerBoot.CheckedChanged += new System.EventHandler(this.TSMIPowerBoot_CheckedChanged);
             // 
             // TSMIExit
             // 
             this.TSMIExit.Name = "TSMIExit";
-            this.TSMIExit.Size = new System.Drawing.Size(148, 22);
+            this.TSMIExit.Size = new System.Drawing.Size(180, 22);
             this.TSMIExit.Text = "退出";
             this.TSMIExit.Click += new System.EventHandler(this.TSMIExit_Click);
+            // 
+            // TSMIConfigFile
+            // 
+            this.TSMIConfigFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.TSMIExportConfig,
+            this.TSMIImportConfig,
+            this.TSMICopyConfig,
+            this.TSMIPasteConfig});
+            this.TSMIConfigFile.Name = "TSMIConfigFile";
+            this.TSMIConfigFile.Size = new System.Drawing.Size(180, 22);
+            this.TSMIConfigFile.Text = "配置文件";
+            // 
+            // TSMIExportConfig
+            // 
+            this.TSMIExportConfig.Name = "TSMIExportConfig";
+            this.TSMIExportConfig.Size = new System.Drawing.Size(180, 22);
+            this.TSMIExportConfig.Text = "导出文件";
+            this.TSMIExportConfig.Click += new System.EventHandler(this.TSMIExportConfig_Click);
+            // 
+            // TSMIImportConfig
+            // 
+            this.TSMIImportConfig.Name = "TSMIImportConfig";
+            this.TSMIImportConfig.Size = new System.Drawing.Size(180, 22);
+            this.TSMIImportConfig.Text = "导入文件";
+            this.TSMIImportConfig.Click += new System.EventHandler(this.TSMIImportConfig_Click);
+            // 
+            // TSMICopyConfig
+            // 
+            this.TSMICopyConfig.Name = "TSMICopyConfig";
+            this.TSMICopyConfig.Size = new System.Drawing.Size(180, 22);
+            this.TSMICopyConfig.Text = "复制到剪切板";
+            this.TSMICopyConfig.Click += new System.EventHandler(this.TSMICopyConfig_Click);
+            // 
+            // TSMIPasteConfig
+            // 
+            this.TSMIPasteConfig.Name = "TSMIPasteConfig";
+            this.TSMIPasteConfig.Size = new System.Drawing.Size(180, 22);
+            this.TSMIPasteConfig.Text = "从剪切板读入";
+            this.TSMIPasteConfig.Click += new System.EventHandler(this.TSMIPasteConfig_Click);
             // 
             // FormMain
             // 
@@ -137,6 +185,11 @@ namespace KeyGo
         private System.Windows.Forms.ToolStripMenuItem TSMIExit;
         private System.Windows.Forms.ToolStripMenuItem TSMIPowerBoot;
         private System.Windows.Forms.ToolStripMenuItem TSMICloseToHide;
+        private System.Windows.Forms.ToolStripMenuItem TSMIConfigFile;
+        private System.Windows.Forms.ToolStripMenuItem TSMIExportConfig;
+        private System.Windows.Forms.ToolStripMenuItem TSMIImportConfig;
+        private System.Windows.Forms.ToolStripMenuItem TSMICopyConfig;
+        private System.Windows.Forms.ToolStripMenuItem TSMIPasteConfig;
     }
 }
 

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -103,7 +105,8 @@ namespace KeyGo
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             _KeyGo.UnRegAllKey();
-            SaveHotKeyItems(_KeyGo);
+            // 关闭后不用保存，修改时保存即可
+            //SaveHotKeyItems(_KeyGo);
         }
 
         #endregion 窗体事件
@@ -192,17 +195,7 @@ namespace KeyGo
             var frm = new FormHotKey();
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                try
-                {
-                    var item = frm.HotKeyItem;
-                    _KeyGo.AddHotKey(item);
-                    FLP_AddItem(item);
-                    SaveHotKeyItems(_KeyGo);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("在添加新的热键时异常：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                AddHotKeyItem(frm.HotKeyItem);
             }
         }
 
@@ -224,6 +217,30 @@ namespace KeyGo
             var i2 = FLPHotKeys.Controls.GetChildIndex(BtnAdd);
             FLPHotKeys.Controls.SetChildIndex(ucitem, i2);
             FLPHotKeys.Controls.SetChildIndex(BtnAdd, i1);
+        }
+
+        private void AddHotKeyItem(HotKeyItem item, bool save = true)
+        {
+            try
+            {
+                _KeyGo.AddHotKey(item);
+            }
+            catch (Exception ex)
+            {
+                if (item.Enabled)
+                {
+                    // 禁用后再添加
+                    item.Enabled = false;
+                    _KeyGo.AddHotKey(item);
+                }
+                else
+                {
+                    MessageBox.Show("在添加新的热键时异常：" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            FLP_AddItem(item);
+            if (save) SaveHotKeyItems(_KeyGo);
         }
 
         #endregion 热键管理
@@ -309,5 +326,139 @@ namespace KeyGo
         }
 
         #endregion 开机自启动
+
+        #region 拖拽
+
+        private void FLPHotKeys_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Link;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void FLPHotKeys_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetData(DataFormats.FileDrop) is Array files && files.Length > 0)
+            {
+                var filepath = files.GetValue(0) as string;
+                var frm = new FormHotKey
+                {
+                    HotKeyItem = new HotKeyItem
+                    {
+                        StartupPath = filepath,
+                    }
+                };
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    AddHotKeyItem(frm.HotKeyItem);
+                }
+            }
+        }
+
+        #endregion 拖拽
+
+        #region 配置文件管理
+
+        private string ConfigToString(List<HotKeyItem> items)
+        {
+            return string.Join(Environment.NewLine, items.Select(item => $"{item.HotKey}|{item.ProcessName}|{item.StartupPath}"));
+        }
+
+        private List<HotKeyItem> ParseConfig(string config)
+        {
+            if (string.IsNullOrWhiteSpace(config))
+                throw new ArgumentNullException(nameof(config));
+
+            return config.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                         .Select(s =>
+                         {
+                             var strs = s.Split('|');
+                             if (strs.Length < 3)
+                                 throw new Exception("数据格式不正确，无法解析");
+                             return new HotKeyItem
+                             {
+                                 HotKey = strs[0],
+                                 ProcessName = strs[1],
+                                 StartupPath = strs[2],
+                             };
+                         }).ToList();
+        }
+
+        private void ImportConfig(string config)
+        {
+            if (string.IsNullOrWhiteSpace(config))
+            {
+                MessageBox.Show("导入失败，数据为空！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                var items = ParseConfig(config);
+                foreach (var item in items)
+                    AddHotKeyItem(item, false);
+                SaveHotKeyItems(_KeyGo);
+                MessageBox.Show("导入完成", "提示");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "导入失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+
+        private void TSMIExportConfig_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog frm = new SaveFileDialog
+            {
+                Title = "请选择文件保存位置",
+                Filter = "Config file (*.config)|*.config|All file (*.*)|*.*",
+                FileName = "KeyGo_Hotkey.config",
+                RestoreDirectory = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            };
+            if (frm.ShowDialog() == DialogResult.OK)
+            {
+                using (StreamWriter writer = new StreamWriter(frm.OpenFile()))
+                {
+                    writer.Write(ConfigToString(_KeyGo.Items));
+                }
+                if (MessageBox.Show("写入完成，是否打开目录？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    Process.Start("Explorer", "/select,"+ frm.FileName);
+            }
+        }
+
+        private void TSMIImportConfig_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog frm = new OpenFileDialog
+            {
+                Title = "请选择配置文件",
+                Filter = "Config file (*.config)|*.config|All file (*.*)|*.*",
+                RestoreDirectory = true,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            };
+            if (frm.ShowDialog() == DialogResult.OK)
+            {
+                string data;
+                using (StreamReader reader = new StreamReader(frm.OpenFile()))
+                {
+                    data = reader.ReadToEnd();
+                }
+                ImportConfig(data);
+            }
+        }
+
+        private void TSMICopyConfig_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetDataObject(ConfigToString(_KeyGo.Items), true);
+        }
+
+        private void TSMIPasteConfig_Click(object sender, EventArgs e)
+        {
+            ImportConfig(Clipboard.GetText());
+        }
+
+        #endregion
     }
 }

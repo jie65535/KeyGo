@@ -253,14 +253,24 @@ namespace KeyGo
         /// 添加一个新热键
         /// </summary>
         /// <param name="item">The item.</param>
+        /// <exception cref="ArgumentNullException">
+        /// item
+        /// or
+        /// HotKey - 热键不能为空！
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// 功能键不能为空！
+        /// or
+        /// 快捷键不能为空！
+        /// </exception>
         public void AddHotKey(HotKeyItem item)
         {
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
-            Items.Add(item);
             if (item.Enabled)
                 RegKey(item);
+            Items.Add(item);
         }
 
         /// <summary>
@@ -272,10 +282,9 @@ namespace KeyGo
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
-            Items.Remove(item);
-
             if (item.HotKeyID != 0)
                 UnRegKey(item);
+            Items.Remove(item);
         }
 
         /// <summary>
